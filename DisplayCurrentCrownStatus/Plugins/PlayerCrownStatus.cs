@@ -45,7 +45,14 @@ namespace DisplayCurrentCrownStatus.Plugins
             //Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, 1, false);
             //tex.SetPixels(SpriteManagement.CrownSprites[crown]);
             //Rect rect = new Rect(0, 0, tex.width, tex.height);
-            CrownImage.sprite = SpriteManagement.CrownSprites[crown];
+            if (SpriteManagement.CrownSprites.ContainsKey(crown))
+            {
+                CrownImage.sprite = SpriteManagement.CrownSprites[crown];
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         public void Reset(bool isEnabled)
