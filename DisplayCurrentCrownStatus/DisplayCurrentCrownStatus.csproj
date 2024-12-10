@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ModName>DisplayCurrentCrownStatus</ModName>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <Description>A Rhythm Festival mod to show the crown status of your current play.</Description>
   </PropertyGroup>
   
