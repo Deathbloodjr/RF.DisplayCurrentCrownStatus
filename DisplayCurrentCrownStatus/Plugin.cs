@@ -7,6 +7,7 @@ using BepInEx.Configuration;
 using DisplayCurrentCrownStatus.Plugins;
 using UnityEngine;
 using System.Collections;
+using SaveProfileManager.Plugins;
 
 namespace DisplayCurrentCrownStatus
 {
@@ -25,11 +26,13 @@ namespace DisplayCurrentCrownStatus
         public override void Load()
         {
             Instance = this;
-
+            
             Log = base.Log;
 
             SetupConfig();
             SetupHarmony();
+
+            AddToSaveManager();
         }
 
         private void SetupConfig()
@@ -42,16 +45,23 @@ namespace DisplayCurrentCrownStatus
                 "Enables the mod.");
         }
 
+
+
         private void SetupHarmony()
         {
             // Patch methods
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 
-            if (ConfigEnabled.Value)
+            LoadPlugin();
+        }
+
+        public static void LoadPlugin()
+        {
+            if (Instance.ConfigEnabled.Value)
             {
                 bool result = true;
                 // If any PatchFile fails, result will become false
-                result &= PatchFile(typeof(DisplayCurrentCrownStatusPatch));
+                result &= Instance.PatchFile(typeof(DisplayCurrentCrownStatusPatch));
                 if (result)
                 {
                     Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} is loaded!");
@@ -60,7 +70,7 @@ namespace DisplayCurrentCrownStatus
                 {
                     Log.LogError($"Plugin {MyPluginInfo.PLUGIN_GUID} failed to load.");
                     // Unload this instance of Harmony
-                    _harmony.UnpatchSelf();
+                    Instance._harmony.UnpatchSelf();
                 }
             }
             else
@@ -89,6 +99,21 @@ namespace DisplayCurrentCrownStatus
                 Log.LogInfo(e.Message);
                 return false;
             }
+        }
+
+        public static void UnloadPlugin()
+        {
+            Instance._harmony.UnpatchSelf();
+            Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} has been unpatched.");
+        }
+
+        public void AddToSaveManager()
+        {
+            PluginSaveDataInterface plugin = new PluginSaveDataInterface(MyPluginInfo.PLUGIN_GUID);
+            plugin.AssignLoadFunction(LoadPlugin);
+            plugin.AssignUnloadFunction(UnloadPlugin);
+            plugin.AddToManager();
+            //Logger.Log("Plugin added to SaveDataManager");
         }
 
         public static MonoBehaviour GetMonoBehaviour() => TaikoSingletonMonoBehaviour<CommonObjects>.Instance;
