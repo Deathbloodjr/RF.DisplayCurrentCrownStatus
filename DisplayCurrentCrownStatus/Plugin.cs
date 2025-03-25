@@ -120,9 +120,8 @@ namespace DisplayCurrentCrownStatus
             PluginSaveDataInterface plugin = new PluginSaveDataInterface(MyPluginInfo.PLUGIN_GUID);
             plugin.AssignLoadFunction(LoadPlugin);
             plugin.AssignUnloadFunction(UnloadPlugin);
-            plugin.AssignConfigSetupFunction(SetupConfig);
-            plugin.AddToManager();
-            Logger.Log("Plugin added to SaveDataManager");
+            //plugin.AssignConfigSetupFunction(SetupConfig);
+            plugin.AddToManager(ConfigEnabled.Value);
         }
 
         private bool IsSaveManagerLoaded()
